@@ -49,7 +49,7 @@ if args.f:
     file.close()
 
     subprocess.call(shlex.split("/usr/local/sbin/tts_audio.sh /tmp/wxforecast.txt"))
-    #subprocess.call(shlex.split("rm -f /tmp/wxforecast.txt"))
+    subprocess.call(shlex.split("rm -f /tmp/wxforecast.txt"))
     subprocess.call(shlex.split("rm -f /etc/asterisk/custom/wxforecast.ul"))
     subprocess.call(shlex.split("mv /tmp/wxforecast.ul /etc/asterisk/custom"))
 
@@ -69,6 +69,6 @@ elif args.c:
     file.close()
 
     subprocess.call(shlex.split("/usr/local/sbin/tts_audio.sh /tmp/wxcurrent.txt"))
-    #subprocess.call(shlex.split("rm -f /tmp/wxcurrent.txt"))
+    subprocess.call(shlex.split("rm -f /tmp/wxcurrent.txt"))
     subprocess.call(shlex.split("rm -f /etc/asterisk/custom/wxcurrent.ul"))
     subprocess.call(shlex.split("mv /tmp/wxcurrent.ul /etc/asterisk/custom"))
