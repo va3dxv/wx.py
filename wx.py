@@ -1,8 +1,7 @@
 #!/usr/bin/python
 #
 # wx.py - 2018/12/19
-# va3dxv
-#
+# 
 #####################
 import argparse
 import json
@@ -40,7 +39,6 @@ if args.f:
     #subprocess.call(shlex.split("rm -f /tmp/wxforecast.txt"))
     subprocess.call(shlex.split("rm -f /etc/asterisk/custom/wxforecast.ul"))
     subprocess.call(shlex.split("mv /tmp/wxforecast.ul /etc/asterisk/custom"))
-
 
 elif args.c:
     print ("tts current wx")
