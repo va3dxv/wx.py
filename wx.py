@@ -1,5 +1,7 @@
 #!/usr/bin/python
+#
 # wx.py
+#
 # 19/12/2018
 #
 # Brian Graves - VA3DXV
@@ -8,6 +10,11 @@
 #
 # This script requires tts_audio.sh and API access to voicerss.org
 # calls tts_audio.sh to create .ul file for asterisk
+#
+# Also requires 'requests' and 'xmltodict' module for python:
+# sudo apt-get install python-pip
+# sudo python -m pip install xmltodict
+# sudo python -m pip install requests
 #
 # Run this file from root crontab to create the audio file every 4 hours
 # 0 */1 * * * /usr/local/sbin/wx.py -c >/dev/null 2>&1
@@ -34,6 +41,11 @@ args = parser.parse_args()
 xml_data = requests.get(
     url="http://dd.weather.gc.ca/citypage_weather/xml/ON/s0000070_e.xml"
 )
+
+# LISTING of XML feeds and their cities, here:
+# http://dd.weather.gc.ca/citypage_weather/xml/siteList.xml
+# Corresponds to ACTUAL XML feeds here:
+# http://dd.weather.gc.ca/citypage_weather/xml/ON/
 
 weather_data = xmltodict.parse(xml_data.text)
 
