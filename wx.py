@@ -1,4 +1,5 @@
-#
+#!/usr/bin/python
+# wx.py
 # 19/12/2018
 #
 # Brian Graves - VA3DXV
@@ -14,7 +15,7 @@
 #
 # add to /etc/asterisk/rpt.conf under [functions]
 # 86=cmd,asterisk -rx "rpt localplay 47960 /etc/asterisk/custom/wxcurrent"
-# 87cmd,asterisk -rx "rpt localplay 47960 /etc/asterisk/custom/wxforecast"
+# 87=cmd,asterisk -rx "rpt localplay 47960 /etc/asterisk/custom/wxforecast"
 #####################################################################################################
 import argparse
 import json
