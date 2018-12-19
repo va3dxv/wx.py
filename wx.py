@@ -1,8 +1,21 @@
-#!/usr/bin/python
 #
-# wx.py - 2018/12/19
-# 
-#####################
+# 19/12/2018
+#
+# Brian Graves - VA3DXV
+#
+# va3dxv@gmail.com
+#
+# This script requires tts_audio.sh and API access to voicerss.org
+# calls tts_audio.sh to create .ul file for asterisk
+#
+# Run this file from root crontab to create the audio file every 4 hours
+# 0 */1 * * * /usr/local/sbin/wx.py -c >/dev/null 2>&1
+# 5 */2 * * * /usr/local/sbin/wx.py -f >/dev/null 2>&1
+#
+# add to /etc/asterisk/rpt.conf under [functions]
+# 86=cmd,asterisk -rx "rpt localplay 47960 /etc/asterisk/custom/wxcurrent"
+# 87cmd,asterisk -rx "rpt localplay 47960 /etc/asterisk/custom/wxforecast"
+#####################################################################################################
 import argparse
 import json
 import requests
