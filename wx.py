@@ -76,7 +76,6 @@ elif args.c:
                    weather_data["siteData"]["currentConditions"]["relativeHumidity"]["@units"],
                    weather_data["siteData"]["currentConditions"]["wind"]["speed"]["#text"],
                    weather_data["siteData"]["currentConditions"]["wind"]["speed"]["@units"],
-                   # weather_data["siteData"]["currentConditions"]["wind"]["direction"],
                )
                )
     file.close()
