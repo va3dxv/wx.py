@@ -69,15 +69,21 @@ if args.f:
 elif args.c:
     print ("tts current wx")
     file = open("/tmp/wxcurrent.txt", "w")
-    file.write("Current temperature is %s degrees celsius, with %s%s humidity. Current windspeed %s%s.\r\n" % \
+    file.write("The temperature is currently %s with a windchill of %s and %s%s humidity. Current windspeed %s%s. Barometric pressure %s %s and %s. %s.\r\n" % \
                (
                    weather_data["siteData"]["currentConditions"]["temperature"]["#text"],
+                   weather_data["siteData"]["currentConditions"]["windChill"]["#text"],
                    weather_data["siteData"]["currentConditions"]["relativeHumidity"]["#text"],
                    weather_data["siteData"]["currentConditions"]["relativeHumidity"]["@units"],
                    weather_data["siteData"]["currentConditions"]["wind"]["speed"]["#text"],
                    weather_data["siteData"]["currentConditions"]["wind"]["speed"]["@units"],
+                   weather_data["siteData"]["currentConditions"]["pressure"]["#text"],
+                   weather_data["siteData"]["currentConditions"]["pressure"]["@units"],
+                   weather_data["siteData"]["currentConditions"]["pressure"]["@tendency"],
+                   weather_data["siteData"]["warnings"]["event"]["@description"],
                )
                )
+
     file.close()
 
     subprocess.call(shlex.split("/usr/local/sbin/tts_audio.sh /tmp/wxcurrent.txt"))
