@@ -20,8 +20,8 @@
 # 5 */2 * * * /usr/local/sbin/wx.py -f >/dev/null 2>&1
 #
 # Add this to /etc/asterisk/rpt.conf under [functions]
-# 86=cmd,asterisk -rx "rpt localplay 47960 /etc/asterisk/custom/wxcurrent"
-# 87=cmd,asterisk -rx "rpt localplay 47960 /etc/asterisk/custom/wxforecast"#
+# 86=cmd,asterisk -rx "rpt localplay 99999 /etc/asterisk/custom/wxcurrent"
+# 87=cmd,asterisk -rx "rpt localplay 99999 /etc/asterisk/custom/wxforecast"#
 # where 86 or 87 are the DTMF control commands you want to use and where 99999 is your node number
 #
 #################################
