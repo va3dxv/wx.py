@@ -2,28 +2,29 @@
 #
 # wx.py
 #
-# 19/12/2018
+# 01/01/2019
 #
 # Brian Graves - VA3DXV
 #
 # va3dxv@gmail.com
 #
-# This script requires tts_audio.sh and API access to voicerss.org
-# calls tts_audio.sh to create .ul file for asterisk
+# https://github.com/va3dxv
 #
-# Also requires 'requests' and 'xmltodict' module for python:
-# sudo apt-get install python-pip
-# sudo python -m pip install xmltodict
-# sudo python -m pip install requests
+# pulls weather data from Environment Canada weather.gc.ca xml feed
 #
-# Run this file from root crontab to create the audio file every 4 hours
+# This script requires access to http://api.voicerss.org (it's free)
+# as well as lame and sox to create the .ul file for asterisk
+#
+# Run this file from roots crontab to create the audio file every hour or 2
 # 0 */1 * * * /usr/local/sbin/wx.py -c >/dev/null 2>&1
 # 5 */2 * * * /usr/local/sbin/wx.py -f >/dev/null 2>&1
 #
-# add to /etc/asterisk/rpt.conf under [functions]
-# 86=cmd,asterisk -rx "rpt localplay 99999 /etc/asterisk/custom/wxcurrent"
-# 87=cmd,asterisk -rx "rpt localplay 99999 /etc/asterisk/custom/wxforecast"
-#####################################
+# Add this to /etc/asterisk/rpt.conf under [functions]
+# 86=cmd,asterisk -rx "rpt localplay 47960 /etc/asterisk/custom/wxcurrent"
+# 87=cmd,asterisk -rx "rpt localplay 47960 /etc/asterisk/custom/wxforecast"#
+# where 86 or 85 are the DTMF control commands you want to use and where 99999 is your node number
+#
+#################################
 import argparse
 import requests
 import xmltodict
