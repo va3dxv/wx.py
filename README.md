@@ -1,7 +1,7 @@
 # wx.py
-Environment Canada weather text to speech for AllStarLink
+Grabs weather data from environment canada and converts text to u-law audio for Asterisk/app_rpt
 
-19/12/2018
+01/01/2019
 
 Brian Graves - VA3DXV
 va3dxv@gmail.com
@@ -12,9 +12,9 @@ Retreives results from an XML feed:
 
 http://dd.weatheroffice.ec.gc.ca/citypage_weather/xml/
 
-This script calls tts_audio.sh to create .ul files for asterisk to play.
+This script requires access to http://api.voicerss.org (it's free)
 
-tts_audio.sh requires a login and API key from http://voicerss.org
+Also requires lame and sox to create the .ul file for asterisk (sudo apt-get install lame && sudo apt-get install sox)
 
 Also requires 'requests' and 'xmltodict' module for python:
 sudo apt-get install python-pip && sudo python -m pip install xmltodict && sudo python -m pip install requests
@@ -28,7 +28,8 @@ sudo crontab -e:
 5 */2 * * * /usr/local/sbin/wx.py -f >/dev/null 2>&1
 
 add to /etc/asterisk/rpt.conf under [functions]
+where 86 or 87 are the DTMF control commands you want to use and where 99999 is your node number
 
-86=cmd,asterisk -rx "rpt localplay 47960 /etc/asterisk/custom/wxcurrent"
+86=cmd,asterisk -rx "rpt localplay 99999 /etc/asterisk/custom/wxcurrent"
 
-87=cmd,asterisk -rx "rpt localplay 47960 /etc/asterisk/custom/wxforecast"
+87=cmd,asterisk -rx "rpt localplay 99999 /etc/asterisk/custom/wxforecast"
