@@ -53,8 +53,10 @@ localxmlfeed = "http://dd.weather.gc.ca/citypage_weather/xml/ON/s0000623_e.xml"
 # Corresponds to ACTUAL XML feeds here:
 # http://dd.weather.gc.ca/citypage_weather/xml/ON (replace ON with your province)
 #
+# your city name as you want it spoken
+city = "Ottawa Ontario"
 # set your voicerss API key here
-voicersskey = ""
+voicersskey = "yourvoicersskeygoeshere"
 # set your desired voice language here
 voicersslang = "en-us"
 # set speed of speech here
@@ -65,24 +67,30 @@ voicerssformat = "44khz_16bit_mono"
 #
 # end configuration
 #
-temppath = ""
-aslpath = ""
-scriptname = "wx"
-aslfile = aslpath + "wx"
-ffiletxt = temppath + scriptname + "forecast.txt"
-ffilemp3 = temppath + scriptname + "forecast.mp3"
-ffilewav = temppath + scriptname + "forecast.wav"
-ffileul = aslfile + "forecast.ul"
-cfiletxt = temppath + scriptname + "current.txt"
-cfilemp3 = temppath + scriptname + "current.mp3"
-cfilewav = temppath + scriptname + "current.wav"
-cfileul = aslfile + "current.ul"
+
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", help="Grab forecast and convert to speech.",
                     action="store_true", default=False)
 parser.add_argument("-c", help="Grab current conditions and convert to speech.",
                     action="store_true", default=True)
 args = parser.parse_args()
+
+
+temppath = "/tmp/"
+aslpath = "/etc/asterisk/custom/"
+scriptname = "wx"
+aslfile = aslpath + "wx"
+
+ffiletxt = temppath + scriptname + "forecast.txt"
+ffilemp3 = temppath + scriptname + "forecast.mp3"
+ffilewav = temppath + scriptname + "forecast.wav"
+ffileul = aslfile + "forecast.ul"
+
+cfiletxt = temppath + scriptname + "current.txt"
+cfilemp3 = temppath + scriptname + "current.mp3"
+cfilewav = temppath + scriptname + "current.wav"
+cfileul = aslfile + "current.ul"
+
 xml_data = requests.get(
     url=localxmlfeed
 )
@@ -92,10 +100,8 @@ weather_data = xmltodict.parse(xml_data.text)
 def make_fctext():
     print("Making forecast text.")
     file = open(ffiletxt, "w")
-    for location in weather_data["siteData"]["location"][0]:
-        file.write("Forecast for %s...\r\n" % (
-            location["region"]["#text"]
-        ))
+
+    file.write("Forecast for " + city + "...\r\n")
     for forecast in weather_data["siteData"]["forecastGroup"]["forecast"][0:4]:
         file.write("%s, %s. \r\n" % (
             forecast["period"]["#text"],
@@ -135,10 +141,10 @@ def clean_fctemp():
 def make_wxtext():
     print("Making current weather text.")
     file = open(cfiletxt, "w")
-    file.write("The temperature is currently %s with a windchill of 0 and %s%s humidity. Current windspeed %s%s. Barometric pressure %s %s and %s..\r\n" %
+    file.write("The temperature is currently %s with %s%s humidity. Current windspeed %s%s. Barometric pressure %s %s and %s..\r\n" %
                (
                    weather_data["siteData"]["currentConditions"]["temperature"]["#text"],
-                   #weather_data["siteData"]["currentConditions"]["windChill"]["#text"],
+                   # weather_data["siteData"]["currentConditions"]["windChill"]["#text"],
                    weather_data["siteData"]["currentConditions"]["relativeHumidity"]["#text"],
                    weather_data["siteData"]["currentConditions"]["relativeHumidity"]["@units"],
                    weather_data["siteData"]["currentConditions"]["wind"]["speed"]["#text"],
@@ -183,15 +189,15 @@ try:
 
     if args.f:
         make_fctext()
-       # make_fcmp3()
-       # make_fculaw()
-       # clean_fctemp()
+        make_fcmp3()
+        make_fculaw()
+        clean_fctemp()
 
     elif args.c:
         make_wxtext()
-       # make_wxmp3()
-       # make_wxulaw()
-       # clean_wxtemp()
+        make_wxmp3()
+        make_wxulaw()
+        clean_wxtemp()
 
 finally:
     print("Finished.")
