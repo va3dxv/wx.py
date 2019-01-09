@@ -104,12 +104,12 @@ def make_fctext():
 
 def make_fcmp3():
     print("Making MP3.")
-    bandreport = open(ffiletxt, "r")
+    wxf = open(ffiletxt, "r")
     getmp3 = requests.get("http://api.voicerss.org/",
                           data={"key": voicersskey, "r": voicerssspeed,
-                                "src": bandreport, "hl": voicersslang, "f": voicerssformat}
+                                "src": wxf, "hl": voicersslang, "f": voicerssformat}
                           )
-    bandreport.close()
+    wxf.close()
     mp3file = open(ffilemp3, "wb")
     mp3file.write(getmp3.content)
     mp3file.close()
@@ -151,12 +151,12 @@ def make_wxtext():
 
 def make_wxmp3():
     print("Making MP3.")
-    bandreport = open(cfiletxt, "r")
+    wxc = open(cfiletxt, "r")
     getmp3 = requests.get("http://api.voicerss.org/",
                           data={"key": voicersskey, "r": voicerssspeed,
-                                "src": bandreport, "hl": voicersslang, "f": voicerssformat}
+                                "src": wxc, "hl": voicersslang, "f": voicerssformat}
                           )
-    bandreport.close()
+    wxc.close()
     mp3file = open(cfilemp3, "wb")
     mp3file.write(getmp3.content)
     mp3file.close()
