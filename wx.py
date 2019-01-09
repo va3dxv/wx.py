@@ -46,7 +46,7 @@ import shlex
 #
 # configuration
 #
-localxmlfeed = "http://dd.weather.gc.ca/citypage_weather/xml/ON/s0000070_e.xml"
+localxmlfeed = "http://dd.weather.gc.ca/citypage_weather/xml/ON/s0000623_e.xml"
 #
 # LISTING of XML feeds and their cities, here:
 # http://dd.weather.gc.ca/citypage_weather/xml/siteList.xml
@@ -54,7 +54,7 @@ localxmlfeed = "http://dd.weather.gc.ca/citypage_weather/xml/ON/s0000070_e.xml"
 # http://dd.weather.gc.ca/citypage_weather/xml/ON (replace ON with your province)
 #
 # set your voicerss API key here
-voicersskey = "yourvoicerssapikeygoeshere"
+voicersskey = ""
 # set your desired voice language here
 voicersslang = "en-us"
 # set speed of speech here
@@ -65,8 +65,8 @@ voicerssformat = "44khz_16bit_mono"
 #
 # end configuration
 #
-temppath = "/tmp/"
-aslpath = "/etc/asterisk/custom/"
+temppath = ""
+aslpath = ""
 scriptname = "wx"
 aslfile = aslpath + "wx"
 ffiletxt = temppath + scriptname + "forecast.txt"
@@ -92,7 +92,10 @@ weather_data = xmltodict.parse(xml_data.text)
 def make_fctext():
     print("Making forecast text.")
     file = open(ffiletxt, "w")
-    file.write("Forecast for Eastern Ontario...\r\n")
+    for location in weather_data["siteData"]["location"][0]:
+        file.write("Forecast for %s...\r\n" % (
+            location["region"]["#text"]
+        ))
     for forecast in weather_data["siteData"]["forecastGroup"]["forecast"][0:4]:
         file.write("%s, %s. \r\n" % (
             forecast["period"]["#text"],
@@ -132,10 +135,10 @@ def clean_fctemp():
 def make_wxtext():
     print("Making current weather text.")
     file = open(cfiletxt, "w")
-    file.write("The temperature is currently %s with a windchill of %s and %s%s humidity. Current windspeed %s%s. Barometric pressure %s %s and %s..\r\n" %
+    file.write("The temperature is currently %s with a windchill of 0 and %s%s humidity. Current windspeed %s%s. Barometric pressure %s %s and %s..\r\n" %
                (
                    weather_data["siteData"]["currentConditions"]["temperature"]["#text"],
-                   weather_data["siteData"]["currentConditions"]["windChill"]["#text"],
+                   #weather_data["siteData"]["currentConditions"]["windChill"]["#text"],
                    weather_data["siteData"]["currentConditions"]["relativeHumidity"]["#text"],
                    weather_data["siteData"]["currentConditions"]["relativeHumidity"]["@units"],
                    weather_data["siteData"]["currentConditions"]["wind"]["speed"]["#text"],
@@ -180,15 +183,15 @@ try:
 
     if args.f:
         make_fctext()
-        make_fcmp3()
-        make_fculaw()
-        clean_fctemp()
+       # make_fcmp3()
+       # make_fculaw()
+       # clean_fctemp()
 
     elif args.c:
         make_wxtext()
-        make_wxmp3()
-        make_wxulaw()
-        clean_fctemp()
+       # make_wxmp3()
+       # make_wxulaw()
+       # clean_wxtemp()
 
 finally:
     print("Finished.")
