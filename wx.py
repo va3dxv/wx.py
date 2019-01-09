@@ -46,7 +46,7 @@ import shlex
 #
 # configuration
 #
-localxmlfeed="http://dd.weather.gc.ca/citypage_weather/xml/ON/s0000070_e.xml"
+localxmlfeed = "http://dd.weather.gc.ca/citypage_weather/xml/ON/s0000070_e.xml"
 #
 # LISTING of XML feeds and their cities, here:
 # http://dd.weather.gc.ca/citypage_weather/xml/siteList.xml
@@ -77,30 +77,33 @@ cfiletxt = temppath + scriptname + "current.txt"
 cfilemp3 = temppath + scriptname + "current.mp3"
 cfilewav = temppath + scriptname + "current.wav"
 cfileul = aslfile + "current.ul"
-
 parser = argparse.ArgumentParser()
-parser.add_argument("-f", help="Grab forecast and convert to speech.", action = "store_true", default=False)
-parser.add_argument("-c", help="Grab current conditions and convert to speech.", action = "store_true", default=True)
-
+parser.add_argument("-f", help="Grab forecast and convert to speech.",
+                    action="store_true", default=False)
+parser.add_argument("-c", help="Grab current conditions and convert to speech.",
+                    action="store_true", default=True)
 args = parser.parse_args()
-
 xml_data = requests.get(
     url=localxmlfeed
 )
 weather_data = xmltodict.parse(xml_data.text)
-# forecast weather
-if args.f:
-    print ("tts forecast wx")
+
+
+def make_fctext():
+    print("Making forecast text.")
     file = open(ffiletxt, "w")
     file.write("Forecast for Eastern Ontario...\r\n")
     for forecast in weather_data["siteData"]["forecastGroup"]["forecast"][0:4]:
-            file.write("%s, %s. \r\n" % (
+        file.write("%s, %s. \r\n" % (
             forecast["period"]["#text"],
             forecast["textSummary"]
-    ))
+        ))
     file.write("End of forecast.\r\n")
     file.close()
 
+
+def make_fcmp3():
+    print("Making MP3.")
     bandreport = open(ffiletxt, "r")
     getmp3 = requests.get("http://api.voicerss.org/",
                           data={"key": voicersskey, "r": voicerssspeed,
@@ -110,18 +113,26 @@ if args.f:
     mp3file = open(ffilemp3, "wb")
     mp3file.write(getmp3.content)
     mp3file.close()
-# convert to wav with lame (apt-get install lame) then to ulaw with sox (apt-get install sox)
+
+
+def make_fculaw():
+    print("Making ULaw.")
     subprocess.call(shlex.split("lame --decode " + ffilemp3 + " " + ffilewav))
-    subprocess.call(shlex.split("sox -V " + ffilewav + " -r 8000 -c 1 -t ul " + ffileul))
-# cleanup
+    subprocess.call(shlex.split("sox -V " + ffilewav +
+                                " -r 8000 -c 1 -t ul " + ffileul))
+
+
+def clean_fctemp():
+    print("Removing temporary text/mp3 files.")
     subprocess.call(shlex.split("rm -f " + ffiletxt))
     subprocess.call(shlex.split("rm -f " + ffilemp3))
     subprocess.call(shlex.split("rm -f " + ffilewav))
-# current weather
-elif args.c:
-    print ("tts current wx")
+
+
+def make_wxtext():
+    print("Making current weather text.")
     file = open(cfiletxt, "w")
-    file.write("The temperature is currently %s with a windchill of %s and %s%s humidity. Current windspeed %s%s. Barometric pressure %s %s and %s..\r\n" % \
+    file.write("The temperature is currently %s with a windchill of %s and %s%s humidity. Current windspeed %s%s. Barometric pressure %s %s and %s..\r\n" %
                (
                    weather_data["siteData"]["currentConditions"]["temperature"]["#text"],
                    weather_data["siteData"]["currentConditions"]["windChill"]["#text"],
@@ -136,6 +147,10 @@ elif args.c:
                )
 
     file.close()
+
+
+def make_wxmp3():
+    print("Making MP3.")
     bandreport = open(cfiletxt, "r")
     getmp3 = requests.get("http://api.voicerss.org/",
                           data={"key": voicersskey, "r": voicerssspeed,
@@ -145,10 +160,35 @@ elif args.c:
     mp3file = open(cfilemp3, "wb")
     mp3file.write(getmp3.content)
     mp3file.close()
-# convert to wav with lame (apt-get install lame) then to ulaw with sox (apt-get install sox)
+
+
+def make_wxulaw():
+    print("Making ULaw.")
     subprocess.call(shlex.split("lame --decode " + cfilemp3 + " " + cfilewav))
-    subprocess.call(shlex.split("sox -V " + cfilewav + " -r 8000 -c 1 -t ul " + cfileul))
-# cleanup
+    subprocess.call(shlex.split("sox -V " + cfilewav +
+                                " -r 8000 -c 1 -t ul " + cfileul))
+
+
+def clean_wxtemp():
+    print("Removing temporary text/mp3 files.")
     subprocess.call(shlex.split("rm -f " + cfiletxt))
     subprocess.call(shlex.split("rm -f " + cfilemp3))
     subprocess.call(shlex.split("rm -f " + cfilewav))
+
+
+try:
+
+    if args.f:
+        make_fctext()
+        make_fcmp3()
+        make_fculaw()
+        clean_fctemp()
+
+    elif args.c:
+        make_wxtext()
+        make_wxmp3()
+        make_wxulaw()
+        clean_fctemp()
+
+finally:
+    print("Finished.")
