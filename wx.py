@@ -56,15 +56,13 @@ localxmlfeed = "http://dd.weather.gc.ca/citypage_weather/xml/ON/s0000623_e.xml"
 # your city name as you want it spoken
 city = "Ottawa Ontario"
 # set your voicerss API key here
-voicersskey = "yourvoicersskeygoeshere"
+voicersskey = "yourvoicerssapikeygoeshere"
 # set your desired voice language here
 voicersslang = "en-us"
 # set speed of speech here
 voicerssspeed = "-1"
 # set format of initial audio before converting to ulaw
 voicerssformat = "44khz_16bit_mono"
-#
-#
 # end configuration
 #
 
@@ -82,12 +80,10 @@ scriptname = "wx"
 aslfile = aslpath + "wx"
 
 ffiletxt = temppath + scriptname + "forecast.txt"
-ffilemp3 = temppath + scriptname + "forecast.mp3"
 ffilewav = temppath + scriptname + "forecast.wav"
 ffileul = aslfile + "forecast.ul"
 
 cfiletxt = temppath + scriptname + "current.txt"
-cfilemp3 = temppath + scriptname + "current.mp3"
 cfilewav = temppath + scriptname + "current.wav"
 cfileul = aslfile + "current.ul"
 
@@ -111,30 +107,28 @@ def make_fctext():
     file.close()
 
 
-def make_fcmp3():
-    print("Making MP3.")
+def make_fcwav():
+    print("Making WAV.")
     wxf = open(ffiletxt, "r")
-    getmp3 = requests.get("http://api.voicerss.org/",
+    getwav = requests.get("http://api.voicerss.org/",
                           data={"key": voicersskey, "r": voicerssspeed,
                                 "src": wxf, "hl": voicersslang, "f": voicerssformat}
                           )
     wxf.close()
-    mp3file = open(ffilemp3, "wb")
-    mp3file.write(getmp3.content)
-    mp3file.close()
+    wavfile = open(ffilewav, "wb")
+    wavfile.write(getwav.content)
+    wavfile.close()
 
 
 def make_fculaw():
     print("Making ULaw.")
-    subprocess.call(shlex.split("lame --decode " + ffilemp3 + " " + ffilewav))
     subprocess.call(shlex.split("sox -V " + ffilewav +
                                 " -r 8000 -c 1 -t ul " + ffileul))
 
 
 def clean_fctemp():
-    print("Removing temporary text/mp3 files.")
+    print("Removing temporary text/wav files.")
     subprocess.call(shlex.split("rm -f " + ffiletxt))
-    subprocess.call(shlex.split("rm -f " + ffilemp3))
     subprocess.call(shlex.split("rm -f " + ffilewav))
 
 
@@ -158,30 +152,28 @@ def make_wxtext():
     file.close()
 
 
-def make_wxmp3():
-    print("Making MP3.")
+def make_wxwav():
+    print("Making WAV.")
     wxc = open(cfiletxt, "r")
-    getmp3 = requests.get("http://api.voicerss.org/",
+    getwav = requests.get("http://api.voicerss.org/",
                           data={"key": voicersskey, "r": voicerssspeed,
                                 "src": wxc, "hl": voicersslang, "f": voicerssformat}
                           )
     wxc.close()
-    mp3file = open(cfilemp3, "wb")
-    mp3file.write(getmp3.content)
-    mp3file.close()
+    wavfile = open(cfilewav, "wb")
+    wavfile.write(getwav.content)
+    wavfile.close()
 
 
 def make_wxulaw():
     print("Making ULaw.")
-    subprocess.call(shlex.split("lame --decode " + cfilemp3 + " " + cfilewav))
     subprocess.call(shlex.split("sox -V " + cfilewav +
                                 " -r 8000 -c 1 -t ul " + cfileul))
 
 
 def clean_wxtemp():
-    print("Removing temporary text/mp3 files.")
+    print("Removing temporary text/wav files.")
     subprocess.call(shlex.split("rm -f " + cfiletxt))
-    subprocess.call(shlex.split("rm -f " + cfilemp3))
     subprocess.call(shlex.split("rm -f " + cfilewav))
 
 
@@ -189,13 +181,13 @@ try:
 
     if args.f:
         make_fctext()
-        make_fcmp3()
+        make_fcwav()
         make_fculaw()
         clean_fctemp()
 
     elif args.c:
         make_wxtext()
-        make_wxmp3()
+        make_wxwav()
         make_wxulaw()
         clean_wxtemp()
 
